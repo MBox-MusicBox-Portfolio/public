@@ -52,10 +52,4 @@ public class BandApplicationService : BaseService<BandApplication>, IBandApplica
         Expression<Func<BandApplication, bool>> filter = app => app.Producer.Id == id;
         return await BuildQuery(filter, pagination).ToListAsync();
     }
-
-    public async Task<BandApplication> AddAsync(Guid id, PaginationInfo pagination)
-    {
-        Expression<Func<BandApplication, bool>> filter = app => app.Producer.Id == id;
-        return await BuildQuery(filter, pagination).ToListAsync();
-    }
 }
