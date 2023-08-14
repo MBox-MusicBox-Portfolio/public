@@ -21,10 +21,13 @@ await redis.connect();
  * @param {*} key 
  * @param {*} object 
  */
-export async function RedisSetValue(key,object)
+export async function RedisSetValue(key,object,timeout=3600)
 {
     try {
-        await redis.set(key,object,'EX',3600);
+        await redis.set(key,object,{
+            EX:timeout,
+            NX:true
+        });
     } catch (error) {
         console.error(`[${new Date().toLocaleString()}] : Redis module: [Service Exceptions]: + ${error}`);
         throw error;

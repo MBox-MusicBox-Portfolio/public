@@ -4,9 +4,14 @@ import * as validator from '../../modules/validator.js';
 import { v4 } from 'uuid';
 import * as redis from '../../modules/redis.js';
 import User from '../../models/user.js';
+import { isConfirmEmail } from './email.js';
 
 dotenv.config();
- 
+
+const response={
+    success:false,
+    value:{}
+}
 const authKey = {
     userKeyEntity: "",
     token: ""
@@ -36,15 +41,12 @@ export async function validationLoginForm(object, context) {
             // Перестроить user перед отправкой
             let jwtObject = await fillJWTUserObject(user,role);  
                 let jwtToken  = await createJWT(jwtObject);
-                let jwtDecode = await decodeJWT(jwtToken); // По ненадобности закомментировать 
                     authKey.userKeyEntity=user.dataValues.Id;
                     authKey.token=jwtToken;
-                let compareToken = await getRedisValue(authKey);
             let redisDb   = await AddJWTToRedis(user.dataValues.Id, jwtToken);
                 context.body = {
                     success:true,
-                    token:jwtToken,
-                    decode: jwtDecode // По ненадобности закомментировать 
+                    token:jwtToken
                 };   
         }
     }      
@@ -91,7 +93,7 @@ export async function getRedisValue(authKey)
 export async function AddJWTToRedis(user, token) {
     try {
         if (user || token) {
-            redis.RedisSetValue("authUser_"+v4() + user, JSON.stringify(authKey));
+            redis.RedisSetValue("authUser_"+v4() + user, JSON.stringify(authKey),7892928);
         }
     } catch (ex) {
        console.error(ex);

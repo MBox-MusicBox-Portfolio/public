@@ -30,7 +30,9 @@ export async function decodeJWT(token)
 {
   if(token)
   {
-        decrypt =  jwt.verify(token, process.env.JWT_SECRET);
+      decrypt =  jwt.verify(token, process.env.JWT_SECRET);
       return decrypt;
+  }else{
+      console.error("Token is missing");
   }
 }

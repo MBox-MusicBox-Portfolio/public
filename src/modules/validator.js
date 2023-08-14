@@ -1,7 +1,9 @@
 // Документация : https://joi.dev/api/?v=17.9.1#introduction
 import Joi from 'joi';
 import crypto from 'bcrypt';
-
+import { v4 } from 'uuid';
+import * as redis from '../modules/redis.js';
+import * as rabbit from '../modules/amqp.js';
 const response={success:false, value:{}}
 
 /**
@@ -144,7 +146,11 @@ export async function databaseValidator(object , user,context)
             context.status = 202;
                 response.value = {
                   email: "To complete the registration process. Your email must be confirmed!"
+
          };
+            let redisKey= "KeyEmail_" +v4();
+                  await redis.RedisSetValue(redisKey,user.dataValues.Id);
+                await rabbit.SendQuery(redisKey,user.dataValues.Name,'register_mail', user.dataValues.Email);
             return response;
         }else if(user.IsBlocked){
               context.status = 403;

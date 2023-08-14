@@ -16,8 +16,9 @@ db.authenticate()
     console.log(`[${new Date().toLocaleString()}]   : DB Module : Db connect successfully`);
   })
   .catch((error) => {
-    (error instanceof Sequelize.ConnectionError) ? console.log(`[${new Date().toLocaleString()}] : DB module : Service is unavailable. Retry again ...`) 
-                                                 : console.log(`[${new Date().toLocaleString()}] : DB module : An error occurred during database authentication.\n Reason: Please check your access rules or login credentials`);
+    (error instanceof Sequelize.ConnectionError) ? console.error(`[${new Date().toLocaleString()}] : DB module [Service] : Service is unavailable. Retry again ...`) 
+                                                 : console.error(`[${new Date().toLocaleString()}] : DB module [Service] : An error occurred during database authentication.\n Reason: Please check your access rules or login credentials`);
+    //(error instanceof SequelizeDatabaseError)    ? console.error(`[${new Date().toLocaleString()}] : DB module [Service] : Database not found`) : console.error(`[${new Date().toLocaleString()}] : DB module [Service] : ${error}`);                                            
   });
 
 export default db;

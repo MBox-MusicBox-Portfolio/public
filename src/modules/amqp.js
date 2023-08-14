@@ -7,6 +7,7 @@ let connection =0;
 let channel = 0;
 let connectString = process.env.CONNECTION_URI_RABITMQ || 'amqp://user:password@rabbitmq:5672';
 let queue = "queue_mailer";
+
 export async function RabbitMQConnection() 
 {
     try{
