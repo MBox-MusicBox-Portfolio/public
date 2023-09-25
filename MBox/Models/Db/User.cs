@@ -12,7 +12,9 @@ namespace MBox.Models.Db
         [EmailAddress]
         public string Email { get; set; }
         public DateTime? Birthday { get; set; }
+        public Playlist UserLibrary { get; set; }
         public List<Band>? FollowingsBands { get; set; } = new();
+        public List<Playlist>? PlaylistsLibrary { get; set; }
         public List<BandApplication>? BandApplications { get; set; } = new();
         [Required]
         public Role Role { get; set; }

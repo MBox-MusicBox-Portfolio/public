@@ -6,6 +6,8 @@
         public string Name { get; set; }
         public User Author { get; set; }
         public DateTime CreatedAt { get; set; }
-        public List<Song> Songs { get; set; }  
+        public List<Song> Songs { get; set; }
+        public bool IsUserLibrary { get; set; }
+        public bool IsPublic { get; set; }
     }
 }

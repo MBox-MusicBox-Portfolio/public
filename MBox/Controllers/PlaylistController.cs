@@ -1,125 +1,62 @@
 ﻿using MBox.Models.Db;
+using MBox.Models.Pagination;
+using MBox.Services.Db.Interfaces;
+using MBox.Services.Responce.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace MBox.Controllers
 {
-    public class PlaylistController : Controller
+    [ApiController]
+    [Route("api/public/playlists")]
+    public class PlaylistController : BaseController<Playlist>
     {
-        private readonly AppDbContext _context;
-        private readonly ILogger _logger;
-
-        public IActionResult Index()
+        private readonly IPlaylistService _servicePlaylist;
+        public PlaylistController(IPlaylistService service, IHttpResponseHandler response) : base(response, service)
         {
-            return View();
+            _servicePlaylist = service;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Playlist>>> GetPlaylists()
-        {
-            var playlists = await _context.Playlists.ToListAsync();
-            return Ok(playlists);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Playlist>> GetPlaylist(Guid id)
-        {
-            var playlist = await _context.Playlists.FindAsync(id);
-
-            if (playlist == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(playlist);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Create(User newUser)
+        [HttpGet("{id}/author/{pagination}")]
+        public async Task<ActionResult<ResponsePresenter>> GetByAuthorAsync(Guid id, [FromQuery] PaginationInfo pagination)
         {
             try
             {
-                if (!ModelState.IsValid) { return BadRequest(ModelState); }
-
-                _context.Users.Add(newUser);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
+                IEnumerable<Playlist> items = await _servicePlaylist.GetByAuthorAsync(id, pagination);
+                return _response.Succes(GetPresentCollection(items));
             }
             catch (Exception ex)
             {
-                _logger.LogInformation(ex.Message);
-                return View();
+                return _response.HandleError(ex);
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Edit(Guid id, User newUser)
+        [HttpPost("{id}/user/{user}/song/{song}")]
+        public async Task<ActionResult<ResponsePresenter>> AddSongToPlaylist(Guid id, Guid user, Guid song)
         {
             try
             {
-                var oldUser = _context.Users.FirstOrDefault(x => x.Id == id);
-                if (oldUser == null) return NotFound();
-
-                oldUser.Email = newUser.Email;
-                //Other properties . . .
-
-
-                _context.Users.Update(oldUser);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
+                var item = await _servicePlaylist.AddSongToPlaylist(user, id, song);
+                return _response.Succes(item);
             }
             catch (Exception ex)
             {
-                _logger.LogInformation(ex.Message);
-                return View();
+                return _response.HandleError(ex);
             }
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        [HttpDelete("{id}/user/{user}/song/{song}")]
+        public async Task<ActionResult<ResponsePresenter>> DeleteSongFromPlaylist(Guid id, Guid user, Guid song)
         {
             try
             {
-                var playlist = _context.Playlists.Find(id);
-                if (playlist == null) return NotFound();
-
-                _context.Playlists.Remove(playlist);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
+                var item = await _servicePlaylist.DeleteSongFromPlaylist(user, id, song);
+                return _response.Succes(item);
             }
             catch (Exception ex)
             {
-                _logger.LogInformation(ex.Message);
-                return View();
-            }
-        }
-
-        public async Task<IActionResult> AddToPlaylist(Guid playlistId, Guid songId)
-        {
-            try
-            {
-                var song = _context.Songs.Find(songId);
-                var playlist = _context.Playlists.Find(playlistId);
-
-                if (song == null || playlist == null) return NotFound();
-
-                if (playlist.Songs.Contains(song)) return View();
-
-                playlist.Songs.Add(song);
-                _context.Playlists.Update(playlist);
-
-                await _context.SaveChangesAsync();
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogInformation(ex.Message);
-                return View();
+                return _response.HandleError(ex);
             }
         }
     }

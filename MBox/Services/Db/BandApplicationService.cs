@@ -6,39 +6,22 @@ using MBox.Services.RabbitMQ;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using MBox.Models.RabbitMq;
 
 namespace MBox.Services.Db;
 
 public class BandApplicationService : BaseService<BandApplication>, IBandApplicationService
 {
     private readonly IConfiguration _configuration;
-    private readonly RabbitMQService _rabbit;
-    //private readonly IHubContext<NotificationSignalR> _hubContext;
-    private readonly IRepository<ApplicationStatus> _repositoryStatus;
-    private readonly IRepository<User> _repositoryUser;
-    private readonly IRepository<Band> _repositoryBand;
-    private readonly IRepository<Producer> _repositoryProducer;
-    private readonly IRepository<Role> _repositoryRole;
+    private readonly RabbitMqService _rabbit;
 
-    public BandApplicationService(RabbitMQService rabbit,
+    public BandApplicationService(RabbitMqService rabbit,
                 IConfiguration configuration,
-                //IHubContext<NotificationSignalR> hubContext,
-                IRepository<BandApplication> app,
-                IRepository<ApplicationStatus> repositoryStatus,
-                IRepository<User> repositoryUser,
-                IRepository<Band> repositoryBand,
-                IRepository<Producer> repositoryProducer,
-                IRepository<Role> repositoryRole)
+                IRepository<BandApplication> app)
                 : base(app)
     {
         _rabbit = rabbit;
-        //_hubContext = hubContext;
         _configuration = configuration;
-        _repositoryStatus = repositoryStatus;
-        _repositoryUser = repositoryUser;
-        _repositoryBand = repositoryBand;
-        _repositoryProducer = repositoryProducer;
-        _repositoryRole = repositoryRole;
     }
 
     public async Task<IEnumerable<BandApplication>> GetByStatusAsync(Guid id, PaginationInfo pagination)
@@ -51,5 +34,29 @@ public class BandApplicationService : BaseService<BandApplication>, IBandApplica
     {
         Expression<Func<BandApplication, bool>> filter = app => app.Producer.Id == id;
         return await BuildQuery(filter, pagination).ToListAsync();
+    }
+
+    public override async Task<BandApplication> AddAsync(BandApplication application)
+    {
+        var msg = new EventMessage()
+        {
+            From = application.Producer?.Id.ToString(),
+            Title = "application_created",
+            Body = application
+        };
+        _rabbit.SendMessage(msg);
+        return await _repository.AddAsync(application);
+    }
+
+    public override async Task<BandApplication> UpdateAsync(BandApplication application)
+    {
+        var msg = new EventMessage()
+        {
+            From = application.Producer?.Id.ToString(),
+            Title = "application_updated",
+            Body = application
+        };
+        _rabbit.SendMessage(msg);
+        return await _repository.UpdateAsync(application);
     }
 }

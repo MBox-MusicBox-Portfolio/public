@@ -14,7 +14,7 @@ public interface IHttpResponseHandler
     ActionResult<ResponsePresenter> NotFound();
     ActionResult<ResponsePresenter> NotFoundWithMessage(string errorMessage, string key = "Server");
     ActionResult<ResponsePresenter> BadRequest();
-    ActionResult<ResponsePresenter> BadRequestWithMessage(string errorMessage, string key = "Server");
+    ActionResult<ResponsePresenter> BadRequest(string errorMessage, string key = "Server");
     ActionResult<ResponsePresenter> Unauthorized();
     ActionResult<ResponsePresenter> Forbidden();
     ActionResult<ResponsePresenter> UnprocessableEntity();

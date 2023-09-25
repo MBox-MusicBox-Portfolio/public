@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace MBox.Services.Responce;
 
-public class HttpResponceHandler : IHttpResponseHandler
+public class HttpResponseHandler : IHttpResponseHandler
 {
     private readonly ResponsePresenter _response;
 
-    public HttpResponceHandler()
+    public HttpResponseHandler()
     {
         _response = new ResponsePresenter();
     }
@@ -47,7 +47,7 @@ public class HttpResponceHandler : IHttpResponseHandler
         throw new NotImplementedException();
     }
 
-    public ActionResult<ResponsePresenter> BadRequestWithMessage(string errorMessage, string key = "Server")
+    public ActionResult<ResponsePresenter> BadRequest(string errorMessage, string key = "Server")
     {
         throw new NotImplementedException();
     }
