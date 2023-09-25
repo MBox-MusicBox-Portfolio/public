@@ -11,7 +11,7 @@ namespace MBox.Services.Db
         private readonly IConfiguration _configuration;
         private readonly IRepository<Band> _repositoryBand;
 
-        public UserService(IRepository<Song> repository, IRepository<Band> repositoryBand, IConfiguration configuration) : base(repository)
+        public UserService(IRepository<User> repository, IRepository<Band> repositoryBand, IConfiguration configuration) : base(repository)
         {
             _configuration = configuration;
             _repositoryBand = repositoryBand;
