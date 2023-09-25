@@ -8,8 +8,6 @@ namespace MBox.Repositories.MYSQL;
 
 public class PlaylistRepository : BaseRepository<Playlist>
 {
-    private readonly ILogger? _logger;
-
     public PlaylistRepository(AppDbContext context) : base(context) { }
 
     public override IQueryable<Playlist> BuildQuery()

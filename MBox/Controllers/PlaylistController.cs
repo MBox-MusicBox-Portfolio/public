@@ -18,8 +18,7 @@ namespace MBox.Controllers
             _servicePlaylist = service;
         }
 
-        // GET: api/public/playlists/{id}/author
-        [HttpGet("{id}/author")]
+        [HttpGet("{id}/author/{pagination}")]
         public async Task<ActionResult<ResponsePresenter>> GetByAuthorAsync(Guid id, [FromQuery] PaginationInfo pagination)
         {
             try
@@ -33,8 +32,8 @@ namespace MBox.Controllers
             }
         }
 
-        [HttpPost("{id}/user/{id}/song")]
-        public async Task<ActionResult<ResponsePresenter>> AddSongToPlaylist(Guid id, [FromBody] Guid user, [FromBody] Guid song)
+        [HttpPost("{id}/user/{user}/song/{song}")]
+        public async Task<ActionResult<ResponsePresenter>> AddSongToPlaylist(Guid id, Guid user, Guid song)
         {
             try
             {
@@ -47,8 +46,8 @@ namespace MBox.Controllers
             }
         }
 
-        [HttpPost("{id}/user/{id}/song")]
-        public async Task<ActionResult<ResponsePresenter>> DeleteSongFromPlaylist(Guid id, [FromBody] Guid user, [FromBody] Guid song)
+        [HttpDelete("{id}/user/{user}/song/{song}")]
+        public async Task<ActionResult<ResponsePresenter>> DeleteSongFromPlaylist(Guid id, Guid user, Guid song)
         {
             try
             {

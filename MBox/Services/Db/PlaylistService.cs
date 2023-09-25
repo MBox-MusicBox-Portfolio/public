@@ -12,20 +12,14 @@ namespace MBox.Services.Db;
 public class PlaylistService : BaseService<Playlist>, IPlaylistService
 {
     private readonly IConfiguration _configuration;
-    private readonly RabbitMQService _rabbit;
     private readonly IRepository<Song> _repositorySong;
-    private readonly IRepository<User> _repositoryUser;
 
-    public PlaylistService(RabbitMQService rabbit,
-        IConfiguration configuration,
+    public PlaylistService(IConfiguration configuration,
         IRepository<Playlist> repositoryPlaylist,
-        IRepository<User> repositoryUser,
         IRepository<Song> repositorySong)
         : base(repositoryPlaylist)
     {
-        _rabbit = rabbit;
         _configuration = configuration;
-        _repositoryUser = repositoryUser;
         _repositorySong = repositorySong;
     }
 

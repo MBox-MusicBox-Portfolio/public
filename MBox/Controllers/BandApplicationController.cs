@@ -18,7 +18,7 @@ namespace MBox.Controllers
         }
 
         // GET: api/public/applications/{id}/user
-        [HttpGet("{id}/user")]
+        [HttpGet("{id}/user/{pagination}")]
         public async Task<ActionResult<ResponsePresenter>> GetApplicationsByUser(Guid id, [FromQuery] PaginationInfo pagination)
         {
             try
@@ -33,7 +33,7 @@ namespace MBox.Controllers
         }
 
         // GET: api/public/applications/{id}/status
-        [HttpGet("{id}/status")]
+        [HttpGet("{id}/status/{pagination}")]
         public async Task<ActionResult<ResponsePresenter>> GetApplicationsByStatus(Guid id, [FromQuery] PaginationInfo pagination)
         {
             try

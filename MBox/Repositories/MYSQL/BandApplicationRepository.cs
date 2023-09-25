@@ -7,8 +7,6 @@ namespace MBox.Repositories.MYSQL;
 
 public class BandApplicationRepository : BaseRepository<BandApplication>
 {
-    private readonly ILogger? _logger;
-
     public BandApplicationRepository(AppDbContext context) : base(context) { }
 
     public override IQueryable<BandApplication> BuildQuery()
