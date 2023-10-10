@@ -1,4 +1,5 @@
 ﻿using MBox.Models.Db;
+using MBox.Models.Presenters;
 using MBox.Services.Db.Interfaces;
 using MBox.Services.Responce.Interface;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +8,7 @@ namespace MBox.Controllers;
 
 [ApiController]
 [Route("api/public/songs")]
-public class SongController : BaseController<Song>
+public class SongController : BaseReadController<Song>
 {
     private readonly ISongService _serviceSong;
     public SongController(ISongService service, IHttpResponseHandler response) : base(response, service)
@@ -15,13 +16,14 @@ public class SongController : BaseController<Song>
         _serviceSong = service;
     }
 
-    [HttpPost("{id}/song/authors")]
-    public async Task<ActionResult<ResponsePresenter>> DeleteSongFromPlaylist(Guid song)
+    [HttpGet("search/{term}")]
+    public async Task<ActionResult<ResponsePresenter>> SearchSong(string term)
     {
         try
         {
-            var items = await _serviceSong.GetBandBySong(song);
-            return _response.Succes(items);
+            var songs = await _serviceSong.GetSongByTerm(term);
+            if (songs == null) { return _response.NoContent(); }
+            return _response.Succes(songs);
         }
         catch (Exception ex)
         {

@@ -1,5 +1,6 @@
 ﻿using MBox.Models.Db;
 using MBox.Models.Pagination;
+using MBox.Models.Presenters;
 using MBox.Services.Db.Interfaces;
 using MBox.Services.Responce.Interface;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,7 @@ namespace MBox.Controllers;
 
 [ApiController]
 [Route("api/public/bands")]
-public class BandController : BaseController<Band>
+public class BandController : BaseReadController<Band>
 {
     private readonly IBandService _serviceBand;
     public BandController(IBandService service, IHttpResponseHandler response) : base(response, service)
@@ -16,8 +17,24 @@ public class BandController : BaseController<Band>
         _serviceBand = service;
     }
 
-    [HttpPut("{band}/band/{user}/user")]
-    public async Task<ActionResult<ResponsePresenter>> AddSongToPlaylist(Guid user, Guid band)
+    [HttpGet("search/{term}")]
+    public async Task<ActionResult<ResponsePresenter>> SearchBand(string term)
+    {
+        try
+        {
+            var bands = await _serviceBand.GetBandByTerm(term);
+            if (bands == null) { return _response.NoContent(); }
+            return _response.Succes(bands);
+        }
+        catch (Exception ex)
+        {
+            return _response.HandleError(ex);
+        }
+    }
+
+
+    [HttpPut("band/{band}/user/{user}")]
+    public async Task<ActionResult<ResponsePresenter>> FollowBand(Guid user, Guid band)
     {
         try
         {
@@ -30,8 +47,8 @@ public class BandController : BaseController<Band>
         }
     }
 
-    [HttpDelete("{band}/band/{user}/user")]
-    public async Task<ActionResult<ResponsePresenter>> DeleteSongFromPlaylist(Guid user, Guid band)
+    [HttpDelete("band/{band}/user/{user}")]
+    public async Task<ActionResult<ResponsePresenter>> UnfollowBand(Guid user, Guid band)
     {
         try
         {
@@ -42,5 +59,10 @@ public class BandController : BaseController<Band>
         {
             return _response.HandleError(ex);
         }
+    }
+
+    protected override object GetPresenter(Band entity)
+    {
+        return new BandPresenter(entity);
     }
 }

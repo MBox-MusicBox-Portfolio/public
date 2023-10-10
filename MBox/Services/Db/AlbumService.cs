@@ -13,7 +13,7 @@ public class AlbumService:BaseService<Album>, IAlbumService
 
     public async Task<IEnumerable<Album>> GetByBandAsync(Guid bandId, PaginationInfo pagination)
     {
-        Expression<Func<Album, bool>> filter = album => album.Author.Id == bandId;
+        Expression<Func<Album, bool>> filter = album => album.Band.Id == bandId;
         return await BuildQuery(filter, pagination).ToListAsync();
     }
 }

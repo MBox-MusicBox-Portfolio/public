@@ -1,4 +1,4 @@
-﻿namespace MBox
+﻿namespace MBox.Models.Presenters
 {
     public class ResponsePresenter<T>
     {
@@ -11,31 +11,6 @@
         {
             IsSuccess = false;
         }
-
-        //public static ResponsePresenter<T> Success(T data)
-        //{
-        //    return new ResponsePresenter<T>
-        //    {
-        //        IsSuccess = true,
-        //        Data = data
-        //    };
-        //}
-
-        //public static ResponsePresenter<T> NotFound(string errorMessage)
-        //{
-        //    return new ResponsePresenter<T>
-        //    {
-        //        ErrorMessage = errorMessage
-        //    };
-        //}
-
-        //public static ResponsePresenter<T> Failed(string errorMessage)
-        //{
-        //    return new ResponsePresenter<T>
-        //    {
-        //        ErrorMessage = errorMessage
-        //    };
-        //}
     }
 
     public class ResponsePresenter

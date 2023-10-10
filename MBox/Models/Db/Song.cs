@@ -1,5 +1,6 @@
 ﻿using MBox.Models.Db;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace MBox.Models.Db
 {
@@ -7,14 +8,16 @@ namespace MBox.Models.Db
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         [Required]
-        public string Name { get; set; }
+        public string? Name { get; set; }
+        public List<Band> Performer { get; } = new();
+        public string? Poster { get; set; }
         [Required]
-        public byte[] Poster { get; set; }
+        public string? Link { get; set; }
+        public Genre? Genre { get; set; }
         public string? Text { get; set; }
         public string? Description { get; set; }
-        public string? Genre { get; set; }
-        public Album? Album { get; set; }
-        public List<Band> Author { get; set; }
-        public int? Popularity { get; set; } // number of plays per week,/month
+        public bool IsBlock { get; set; } = false;
+        [JsonIgnore]
+        public List<Album> Albums { get; set; } = new();
     }
 }

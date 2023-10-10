@@ -6,6 +6,6 @@ namespace MBox.Models.Db
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         [Required]
-        public string Name { get; set; }
+        public string? Name { get; set; }
     }
 }

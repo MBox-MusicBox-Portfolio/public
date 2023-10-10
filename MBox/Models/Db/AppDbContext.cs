@@ -16,19 +16,12 @@ namespace MBox.Models.Db
         public DbSet<Album> Albums { get; set; }
         public DbSet<Song> Songs { get; set; }
         public DbSet<Producer> Producers { get; set; }
-        public DbSet<BandApplication> BandApplications { get; set; }
-        public DbSet<ApplicationStatus> ApplicationStatuses { get; set; }
+        public DbSet<Application> Applications { get; set; }
+        public DbSet<StatusApplications> StatusApplications { get; set; }
+        public DbSet<BlacklistUser> Blacklists { get; set; }
+        public DbSet<SocialUserCredential> SocialUserCredentials { get; set; }
+        public DbSet<LikedPlaylist> LikedPlaylists { get; set; }
+        public DbSet<Genre> Genres { get; set; }
         public DbSet<Role> Roles { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<ApplicationStatus>()
-                .HasIndex(u => u.Name)
-                .IsUnique();
-
-            modelBuilder.Entity<Role>()
-                .HasIndex(u => u.Name)
-                .IsUnique();
-        }
     }
 }

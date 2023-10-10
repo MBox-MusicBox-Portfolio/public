@@ -3,8 +3,8 @@ using MBox.Models.Pagination;
 
 namespace MBox.Services.Db.Interfaces;
 
-public interface IBandApplicationService : IBaseService<BandApplication>
+public interface IBandApplicationService : IBaseService<Application>
 {
-    Task<IEnumerable<BandApplication>> GetByUserAsync(Guid id, PaginationInfo pagination);
-    Task<IEnumerable<BandApplication>> GetByStatusAsync(Guid id, PaginationInfo pagination);
+    Task<IEnumerable<Application>> GetByUserAsync(Guid id, PaginationInfo pagination);
+    Task<IEnumerable<Application>> GetByStatusAsync(Guid id, PaginationInfo pagination);
 }

@@ -24,19 +24,28 @@ public class BaseService<TEntity> : IBaseService<TEntity>
     }
     public IQueryable<TEntity> BuildQuery(Expression<Func<TEntity, bool>> filter, PaginationInfo pagination)
     {
-        var applications = BuildQuery()
+        var items = BuildQuery()
             .Where(filter)
             .Skip((pagination.PageIndex - 1) * pagination.PageSize)
             .Take(pagination.PageSize);
 
-        return applications;
+        return items;
     }
     public IQueryable<TEntity> BuildQuery(Expression<Func<TEntity, bool>> filter)
     {
-        var applications = BuildQuery()
+        var items = BuildQuery()
             .Where(filter);
 
-        return applications;
+        return items;
+    }
+
+    public IQueryable<TEntity> BuildQuery(PaginationInfo pagination)
+    {
+        var items = BuildQuery()
+            .Skip((pagination.PageIndex - 1) * pagination.PageSize)
+            .Take(pagination.PageSize);
+
+        return items;
     }
 
     public virtual async Task<bool> DeleteAsync(Guid id)

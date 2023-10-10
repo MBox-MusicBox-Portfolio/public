@@ -7,7 +7,7 @@ namespace MBox.Controllers;
 
 [ApiController]
 [Route("api/public/news")]
-public class NewsController : BaseController<News>
+public class NewsController : BaseReadController<News>
 {
     private readonly INewsService _serviceNews;
     public NewsController(INewsService service, IHttpResponseHandler response) : base(response, service)
