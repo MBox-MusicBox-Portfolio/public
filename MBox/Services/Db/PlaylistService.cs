@@ -17,10 +17,10 @@ public class PlaylistService : BaseService<Playlist>, IPlaylistService
     private readonly IRepository<Song> _repositorySong;
     private readonly IRepository<User> _repositoryUser;
     private readonly IRepository<LikedPlaylist> _repositoryLikedPlaylist;
-    //private readonly RabbitMqService _rabbit;
+    private readonly RabbitMqService _rabbit;
 
     public PlaylistService(IConfiguration configuration,
-        //RabbitMqService rabbit,
+        RabbitMqService rabbit,
         IRepository<Playlist> repositoryPlaylist,
         IRepository<Song> repositorySong,
         IRepository<User> repositoryUser,
@@ -31,7 +31,7 @@ public class PlaylistService : BaseService<Playlist>, IPlaylistService
         _repositorySong = repositorySong;
         _repositoryUser = repositoryUser;
         _repositoryLikedPlaylist = repositoryLikedPlaylist;
-        //_rabbit = rabbit;
+        _rabbit = rabbit;
     }
 
     public async Task<Playlist> AddSongToPlaylist(Guid userId, Guid playlistId, Guid songId)
@@ -117,7 +117,7 @@ public class PlaylistService : BaseService<Playlist>, IPlaylistService
                 Template = "follow_playlist",
                 To = likedPlaylist.Playlist.Author.Name
             };
-            //_rabbit.SendMessage(eventObj);
+            _rabbit.SendMessage(eventObj);
             await _repositoryLikedPlaylist.AddAsync(likedPlaylist);
             return true;
         }
