@@ -31,6 +31,7 @@ namespace MBox.Services.Db
         {
             var playlist = await _repositoryPlaylist.BuildQuery().FirstOrDefaultAsync(pl =>
             pl.Author.Id == userId &&
+            pl.Name == "UserLibrary" &&
             pl.IsPublic == false);
             if (playlist != null)
             {
