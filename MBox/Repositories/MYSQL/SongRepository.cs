@@ -10,6 +10,6 @@ public class SongRepository : BaseRepository<Song>
     public override IQueryable<Song> BuildQuery()
     {
         return _context.Songs
-            .Include(song => song.Author);
+            .Include(song => song.Performer);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using StackExchange.Redis;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace MBox.Models.Db
 {
@@ -7,19 +8,19 @@ namespace MBox.Models.Db
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         [Required]
-        public string Name { get; set; }
+        public string? Name { get; set; }
+        public string? Avatar { get; set; }
         [Required]
         [EmailAddress]
-        public string Email { get; set; }
+        public string? Email { get; set; }
         public DateTime? Birthday { get; set; }
-        public Playlist UserLibrary { get; set; }
+        [Required]
+        public Role? Role { get; set; }
+        [JsonIgnore]
         public List<Band>? FollowingsBands { get; set; } = new();
-        public List<Playlist>? PlaylistsLibrary { get; set; }
-        public List<BandApplication>? BandApplications { get; set; } = new();
         [Required]
-        public Role Role { get; set; }
-        [Required]
-        public string Password { get; set; }
+        public string? Password { get; set; }
+        public bool IsEmailVerify { get; set; } = false;
         public bool IsBlocked { get; set; } = false;
     }
 }

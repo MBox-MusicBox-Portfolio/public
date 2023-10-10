@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MBox.Repositories.MYSQL;
 
-public class BandApplicationRepository : BaseRepository<BandApplication>
+public class BandApplicationRepository : BaseRepository<Application>
 {
     public BandApplicationRepository(AppDbContext context) : base(context) { }
 
-    public override IQueryable<BandApplication> BuildQuery()
+    public override IQueryable<Application> BuildQuery()
     {
-        return _context.BandApplications
+        return _context.Applications
             .Include(app => app.Producer)
             .Include(app => app.Status);
     }

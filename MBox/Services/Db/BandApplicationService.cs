@@ -10,53 +10,27 @@ using MBox.Models.RabbitMq;
 
 namespace MBox.Services.Db;
 
-public class BandApplicationService : BaseService<BandApplication>, IBandApplicationService
+public class BandApplicationService : BaseService<Application>, IBandApplicationService
 {
     private readonly IConfiguration _configuration;
-    private readonly RabbitMqService _rabbit;
 
-    public BandApplicationService(RabbitMqService rabbit,
+    public BandApplicationService(
                 IConfiguration configuration,
-                IRepository<BandApplication> app)
+                IRepository<Application> app)
                 : base(app)
     {
-        _rabbit = rabbit;
         _configuration = configuration;
     }
 
-    public async Task<IEnumerable<BandApplication>> GetByStatusAsync(Guid id, PaginationInfo pagination)
+    public async Task<IEnumerable<Application>> GetByStatusAsync(Guid id, PaginationInfo pagination)
     {
-        Expression<Func<BandApplication, bool>> filter = app => app.Status.Id == id;
+        Expression<Func<Application, bool>> filter = app => app.Status.Id == id;
         return await BuildQuery(filter, pagination).ToListAsync();
     }
 
-    public async Task<IEnumerable<BandApplication>> GetByUserAsync(Guid id, PaginationInfo pagination)
+    public async Task<IEnumerable<Application>> GetByUserAsync(Guid id, PaginationInfo pagination)
     {
-        Expression<Func<BandApplication, bool>> filter = app => app.Producer.Id == id;
+        Expression<Func<Application, bool>> filter = app => app.Producer.Id == id;
         return await BuildQuery(filter, pagination).ToListAsync();
-    }
-
-    public override async Task<BandApplication> AddAsync(BandApplication application)
-    {
-        var msg = new EventMessage()
-        {
-            From = application.Producer?.Id.ToString(),
-            Title = "application_created",
-            Body = application
-        };
-        _rabbit.SendMessage(msg);
-        return await _repository.AddAsync(application);
-    }
-
-    public override async Task<BandApplication> UpdateAsync(BandApplication application)
-    {
-        var msg = new EventMessage()
-        {
-            From = application.Producer?.Id.ToString(),
-            Title = "application_updated",
-            Body = application
-        };
-        _rabbit.SendMessage(msg);
-        return await _repository.UpdateAsync(application);
     }
 }

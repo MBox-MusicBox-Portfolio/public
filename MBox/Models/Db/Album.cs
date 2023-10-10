@@ -6,15 +6,12 @@ namespace MBox.Models.Db
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         [Required]
-        public byte[] Poster { get; set; }
+        public string? Poster { get; set; }
+        public DateTime Release { get; set; }
         [Required]
-        public string Name { get; set; }
-        [Required]
-        public DateTime ReleaseDate { get; set; }
+        public string? Name { get; set; }
         public string? Description { get; set; }
-
+        public Band? Band { get; set; }
         public List<Song> Songs { get; set; } = new();
-        public Band Author { get; set; }
-        public int? Popularity { get; set; } // number of plays per week,/month
     }
 }

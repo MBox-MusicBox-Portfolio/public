@@ -1,4 +1,6 @@
-﻿using MBox.Services.Responce.Interface;
+﻿using MBox.Models.Exceptions;
+using MBox.Models.Presenters;
+using MBox.Services.Responce.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
@@ -29,91 +31,130 @@ public class HttpResponseHandler : IHttpResponseHandler
 
     public void AddError(object responseData)
     {
-        throw new NotImplementedException();
+        _response.Errors.Add(responseData);
     }
 
     public void AddValue(object data)
     {
-        throw new NotImplementedException();
+        _response.Value.Add(data);
     }
 
     public void AddValue(IEnumerable<object> collection)
     {
-        throw new NotImplementedException();
+        _response.Value.AddRange(collection);
     }
 
     public ActionResult<ResponsePresenter> BadRequest()
     {
-        throw new NotImplementedException();
+        _response.Status = 400;
+        _response.Success = false;
+        return new BadRequestObjectResult(_response);
     }
 
-    public ActionResult<ResponsePresenter> BadRequest(string errorMessage, string key = "Server")
+    public ActionResult<ResponsePresenter> BadRequestWithMessage(string errorMessage, string key = "Server")
     {
-        throw new NotImplementedException();
-    }
-
-    public ActionResult<ResponsePresenter> Created()
-    {
-        throw new NotImplementedException();
+        _response.Status = 400;
+        _response.Success = false;
+        AddError(errorMessage, key);
+        return new BadRequestObjectResult(_response);
     }
 
     public ActionResult<ResponsePresenter> Forbidden()
     {
-        throw new NotImplementedException();
+        return new ForbidResult();
     }
 
     public ActionResult<ResponsePresenter> HandleError(Exception ex)
     {
-        throw new NotImplementedException();
+        if (ex is NotFoundException notFoundEx)
+        {
+            AddError(notFoundEx.Response);
+            return NotFound();
+        }
+        else if (ex is BadRequestException badRequestEx)
+        {
+            AddError(badRequestEx.Response);
+            return BadRequest();
+        }
+        else
+        {
+            return InternalServerError(ex);
+        }
     }
 
-    public ActionResult<ResponsePresenter> InternalServerError()
+    public ActionResult<ResponsePresenter> InternalServerError(Exception ex)
     {
-        throw new NotImplementedException();
+        _response.Status = 500;
+        _response.Success = false;
+        AddError($"An error occurred: ${ex.Message}", "Serve");
+        return new ObjectResult(_response)
+        {
+            StatusCode = 500,
+        };
     }
 
     public bool IsError()
     {
-        throw new NotImplementedException();
+        return _response.Errors.Count > 0 ? true : false;
     }
 
     public ActionResult<ResponsePresenter> NoContent()
     {
-        throw new NotImplementedException();
+        return new NoContentResult();
     }
 
     public ActionResult<ResponsePresenter> NotFound()
     {
-        throw new NotImplementedException();
+        _response.Status = 404;
+        _response.Success = false;
+        return new NotFoundObjectResult(_response);
     }
 
     public ActionResult<ResponsePresenter> NotFoundWithMessage(string errorMessage, string key = "Server")
     {
-        throw new NotImplementedException();
+        _response.Status = 404;
+        _response.Success = false;
+        AddError(errorMessage, key);
+        return new NotFoundObjectResult(_response);
     }
 
     public ActionResult<ResponsePresenter> Succes()
     {
-        throw new NotImplementedException();
+        _response.Status = 200;
+        _response.Success = true;
+        return new OkObjectResult(_response);
     }
 
     public ActionResult<ResponsePresenter> Unauthorized()
     {
-        throw new NotImplementedException();
+        _response.Status = 401;
+        _response.Success = false;
+        return new UnauthorizedObjectResult(_response);
     }
 
     public ActionResult<ResponsePresenter> UnprocessableEntity()
     {
-        throw new NotImplementedException();
+        _response.Status = 422;
+        _response.Success = false;
+        return new UnprocessableEntityObjectResult(_response);
     }
 
     public ActionResult<ResponsePresenter> Succes(object data)
     {
-        throw new NotImplementedException();
+        _response.Status = 200;
+        _response.Success = true;
+        AddValue(data);
+        return new OkObjectResult(_response);
     }
 
     public ActionResult<ResponsePresenter> Created(object data)
     {
-        throw new NotImplementedException();
+        _response.Status = 201;
+        _response.Success = true;
+        AddValue(data);
+        return new ObjectResult(_response)
+        {
+            StatusCode = 201,
+        };
     }
 }

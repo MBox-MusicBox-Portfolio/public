@@ -4,32 +4,43 @@ using RabbitMQ.Client;
 
 namespace MBox.Services.RabbitMQ;
 
-public class RabbitMqService : IRabbitMqService
+public class RabbitMqService
 {
-    public void SendMessage(object obj)
+    private readonly IConnection _connection;
+    private readonly IConfiguration _configuration;
+    private readonly string? _queue;
+    public RabbitMqService(IConnection connection, IConfiguration configuration)
     {
+        _connection = connection;
+        _configuration = configuration;
+        _queue = "queue_event";
+    }
+    public void SendMessage(object message)
+    {
+        SendMessage(message, _queue);
+    }
+    public void SendMessage(object obj, string? queue)
+    {
+        if (queue == null)
+            return;
         var message = JsonSerializer.Serialize(obj);
-        SendMessage(message);
+        SendMessage(message, queue);
     }
 
-    public void SendMessage(string message)
+    public void SendMessage(string message, string? queue)
     {
-        var factory = new ConnectionFactory() { HostName = "localhost" };
-        using (var connection = factory.CreateConnection())
-        using (var channel = connection.CreateModel())
-        {
-            channel.QueueDeclare(queue: "MyQueue",
-                durable: false,
-                exclusive: false,
-                autoDelete: false,
-                arguments: null);
+        using var channel = _connection.CreateModel();
 
-            var body = Encoding.UTF8.GetBytes(message);
+        channel.QueueDeclare(queue: queue,
+            durable: false,
+            exclusive: false,
+            autoDelete: false,
+            arguments: null);
 
-            channel.BasicPublish(exchange: "",
-                routingKey: "MyQueue",
-                basicProperties: null,
-                body: body);
-        }
+        var body = Encoding.UTF8.GetBytes(message);
+
+        channel.BasicPublish(exchange: "",
+            routingKey: queue,
+            body: body);
     }
 }

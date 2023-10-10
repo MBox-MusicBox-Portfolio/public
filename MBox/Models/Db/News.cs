@@ -6,10 +6,12 @@ namespace MBox.Models.Db
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         [Required]
-        public string Name { get; set; }
-        [Required]
-        public string Body { get; set; }
-        public byte[]? Poster { get; set; }
-        public Band Author { get; set; }
+        public string? Name { get; set; }
+        public Band? Author { get; set; }
+        public MemberBand? Member { get; set; }
+        public string? Poster { get; set; }
+        public string? Link { get; set; }
+        public string? Text { get; set; }
+
     }
 }

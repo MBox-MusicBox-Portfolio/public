@@ -9,7 +9,7 @@ namespace MBox.Controllers
 {
     [ApiController]
     [Route("api/public/applications")]
-    public class BandApplicationController : BaseController<BandApplication>
+    public class BandApplicationController : BaseReadController<Application>
     {
         private readonly IBandApplicationService _serviceApp;
         public BandApplicationController(IBandApplicationService service, IHttpResponseHandler response) : base(response, service)
@@ -17,14 +17,14 @@ namespace MBox.Controllers
             _serviceApp = service;
         }
 
-        // GET: api/public/applications/{id}/user
-        [HttpGet("{id}/user/{pagination}")]
+
+        [HttpGet("user/{id}")]
         public async Task<ActionResult<ResponsePresenter>> GetApplicationsByUser(Guid id, [FromQuery] PaginationInfo pagination)
         {
             try
             {
-                IEnumerable<BandApplication> items = await _serviceApp.GetByUserAsync(id, pagination);
-                return _response.Succes(GetPresentCollection(items));
+                IEnumerable<Application> items = await _serviceApp.GetByUserAsync(id, pagination);
+                return _response.Succes(GetPresenterCollection(items));
             }
             catch (Exception ex)
             {
@@ -32,14 +32,55 @@ namespace MBox.Controllers
             }
         }
 
-        // GET: api/public/applications/{id}/status
-        [HttpGet("{id}/status/{pagination}")]
+        [HttpGet("status/{id}")]
         public async Task<ActionResult<ResponsePresenter>> GetApplicationsByStatus(Guid id, [FromQuery] PaginationInfo pagination)
         {
             try
             {
-                IEnumerable<BandApplication> items = await _serviceApp.GetByStatusAsync(id, pagination);
-                return _response.Succes(GetPresentCollection(items));
+                IEnumerable<Application> items = await _serviceApp.GetByStatusAsync(id, pagination);
+                return _response.Succes(GetPresenterCollection(items));
+            }
+            catch (Exception ex)
+            {
+                return _response.HandleError(ex);
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ResponsePresenter>> CreateAsync(Application application)
+        {
+            try
+            {
+                Application createdApplication = await _serviceApp.AddAsync(application);
+                return _response.Created(createdApplication);
+            }
+            catch (Exception ex)
+            {
+                return _response.HandleError(ex);
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ResponsePresenter>> UpdateAsync(Application application)
+        {
+            try
+            {
+                Application updatedapplication = await _serviceApp.UpdateAsync(application);
+                return _response.Succes(updatedapplication);
+            }
+            catch (Exception ex)
+            {
+                return _response.HandleError(ex);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async virtual Task<ActionResult<ResponsePresenter>> DeleteAsync(Guid id)
+        {
+            try
+            {
+                await _serviceApp.DeleteAsync(id);
+                return _response.Succes();
             }
             catch (Exception ex)
             {

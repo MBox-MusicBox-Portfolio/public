@@ -11,8 +11,6 @@ public class UserRepository : BaseRepository<User>
     {
         return _context.Users
             .Where(u => u.Id == id)
-            .Include(user => user.UserLibrary)
-            .Include(user => user.FollowingsBands)
-            .Include(user => user.PlaylistsLibrary);
+            .Include(user => user.FollowingsBands);
     }
 }
